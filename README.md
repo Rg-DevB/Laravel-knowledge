@@ -207,32 +207,6 @@ cp .env.example .env
 php artisan key:generate
 ```
 
----
-
-### Configuration
-
-Edit your `.env` file with the following:
-
-```env
-APP_NAME=LaravelKnow
-APP_URL=http://localhost:8000
-
-# Database
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=laravelknow
-DB_USERNAME=root
-DB_PASSWORD=your_password
-
-# Meilisearch
-SCOUT_DRIVER=meilisearch
-MEILISEARCH_HOST=http://localhost:7700
-
-# Queue
-QUEUE_CONNECTION=database
-```
-
 **6. Create the database**
 
 ```bash
