@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Solution;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +19,19 @@ class SolutionController extends Controller
         }
         
         $solution->markAsBest();
+        
+        // Award badge to the solution author if this is their first best solution
+        $author = $solution->author;
+        $bestSolutionBadge = \App\Models\Badge::where('slug', 'first-best-solution')->first();
+        if ($bestSolutionBadge && $author) {
+            $author->awardBadge($bestSolutionBadge, "Best solution for problem #{$problem->id}");
+        }
+        
+        // Check for other badges
+        if ($author) {
+            $author->checkAndAwardBadges();
+        }
+        
         return redirect()->back();
     }
 }

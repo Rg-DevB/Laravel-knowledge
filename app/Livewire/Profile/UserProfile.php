@@ -14,7 +14,11 @@ class UserProfile extends Component
 
     public function mount(string $username): void
     {
-        $this->user = User::where('username', $username)->firstOrFail();
+        $this->user = User::where('username', $username)
+            ->with(['badges' => function($query) {
+                $query->orderByDesc('pivot_earned_at');
+            }])
+            ->firstOrFail();
     }
 
     public function render()

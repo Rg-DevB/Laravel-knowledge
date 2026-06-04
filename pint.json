@@ -1,3 +1,26 @@
 {
-    "preset": "laravel"
+    "preset": "laravel",
+    "rules": {
+        "array_indentation": true,
+        "binary_operator_spaces": {
+            "default": "single_space"
+        },
+        "blank_line_after_namespace": true,
+        "class_attributes_separation": {
+            "elements": {
+                "method": "one"
+            }
+        },
+        "indentation_type": true,
+        "no_unused_imports": true,
+        "ordered_imports": {
+            "sort_algorithm": "alpha"
+        },
+        "single_quote": true,
+        "trailing_comma_in_multiline": {
+            "elements": [
+                "arrays"
+            ]
+        }
+    }
 }

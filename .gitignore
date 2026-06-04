@@ -1,15 +1,12 @@
 ```
 # Dependencies
-node_modules/
+vendor/
+composer.lock
 
 # Build artifacts
-dist/
-build/
-/public/hot
-
-# Cache directories
-.npm/
-.yarn/
+public/hot
+storage/
+bootstrap/cache/
 
 # Environment
 .env
@@ -18,19 +15,16 @@ build/
 
 # Logs
 *.log
+storage/logs/
 
-# OS generated files
+# IDE
+.vscode/
+.idea/
+
+# OS
 .DS_Store
 Thumbs.db
 
-# Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# PHP specific
-vendor/
-composer.lock
-*.php~
+# Tests
+.phpunit.result.cache
 ```
