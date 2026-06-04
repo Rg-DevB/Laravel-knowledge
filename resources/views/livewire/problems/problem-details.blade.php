@@ -36,8 +36,8 @@
             <div class="flex items-center gap-4 mb-6">
                 <a href="{{ route('profile.show', $problem->user->username) }}" wire:navigate class="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     <img src="{{ $problem->user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($problem->user->name).'&background=1e1e2e&color=a78bfa&size=32' }}"
-                         class="w-6 h-6 rounded-full ring-1 ring-zinc-700" alt="{{ $problem->user->name }}">
-                    <span class="text-sm text-zinc-400 hover:text-zinc-200 transition-colors">{{ $problem->user->name }}</span>
+                         class="w-6 h-6 rounded-full ring-1 ring-zinc-700" alt="{{ htmlspecialchars($problem->user->name, ENT_QUOTES, 'UTF-8') }}">
+                    <span class="text-sm text-zinc-400 hover:text-zinc-200 transition-colors">{{ htmlspecialchars($problem->user->name, ENT_QUOTES, 'UTF-8') }}</span>
                 </a>
                 <span class="text-xs text-zinc-600">{{ $problem->created_at->diffForHumans() }}</span>
                 <span class="text-xs text-zinc-600">{{ number_format($problem->views) }} views</span>
@@ -101,7 +101,7 @@
                         <div class="w-2 h-2 rounded-full bg-red-500"></div>
                         <span class="text-xs text-red-400 font-medium">Error Output</span>
                     </div>
-                    <pre class="p-4 text-xs font-mono text-zinc-300 overflow-x-auto leading-relaxed whitespace-pre-wrap">{{ $problem->error_log }}</pre>
+                    <pre class="p-4 text-xs font-mono text-zinc-300 overflow-x-auto leading-relaxed whitespace-pre-wrap">{{ htmlspecialchars($problem->error_log, ENT_QUOTES, 'UTF-8') }}</pre>
                 </div>
                 @endif
             </div>
@@ -126,13 +126,13 @@
                 @if($problem->expected_behavior)
                 <div class="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
                     <p class="text-xs font-semibold text-emerald-400 mb-1.5">✓ Expected behavior</p>
-                    <p class="text-xs text-zinc-400 leading-relaxed">{{ $problem->expected_behavior }}</p>
+                    <p class="text-xs text-zinc-400 leading-relaxed">{{ htmlspecialchars($problem->expected_behavior, ENT_QUOTES, 'UTF-8') }}</p>
                 </div>
                 @endif
                 @if($problem->actual_behavior)
                 <div class="p-3 rounded-xl bg-red-500/5 border border-red-500/20">
                     <p class="text-xs font-semibold text-red-400 mb-1.5">✗ Actual behavior</p>
-                    <p class="text-xs text-zinc-400 leading-relaxed">{{ $problem->actual_behavior }}</p>
+                    <p class="text-xs text-zinc-400 leading-relaxed">{{ htmlspecialchars($problem->actual_behavior, ENT_QUOTES, 'UTF-8') }}</p>
                 </div>
                 @endif
             </div>
@@ -177,7 +177,7 @@
                         <a href="{{ route('profile.show', $solution->user->username) }}" wire:navigate class="flex items-center gap-2 hover:opacity-80 transition-opacity ml-auto">
                             <img src="{{ $solution->user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($solution->user->name).'&background=1e1e2e&color=a78bfa&size=32' }}"
                                  class="w-5 h-5 rounded-full">
-                            <span class="text-xs text-zinc-400">{{ $solution->user->name }}</span>
+                            <span class="text-xs text-zinc-400">{{ htmlspecialchars($solution->user->name, ENT_QUOTES, 'UTF-8') }}</span>
                         </a>
                         <span class="text-xs text-zinc-600">{{ $solution->created_at->diffForHumans() }}</span>
 

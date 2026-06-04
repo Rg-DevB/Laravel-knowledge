@@ -13,21 +13,21 @@ use Illuminate\Support\Facades\Route;
 
 // ── Public routes ──────────────────────────────────────────────
 Route::get('/', LandingPage::class)->name('home');
-Route::get('/problems', ProblemList::class)->name('problems.index');
-Route::get('/problems/{slug}', ProblemDetails::class)->name('problems.show');
-Route::get('/u/{username}', UserProfile::class)->name('profile.show');
-Route::get('/tags/{slug}', ProblemList::class)->name('tags.show');
+Route::get('/problems', ProblemList::class)->name('problems.index')->middleware('throttle:30,1');
+Route::get('/problems/{slug}', ProblemDetails::class)->name('problems.show')->middleware('throttle:60,1');
+Route::get('/u/{username}', UserProfile::class)->name('profile.show')->middleware('throttle:30,1');
+Route::get('/tags/{slug}', ProblemList::class)->name('tags.show')->middleware('throttle:30,1');
 
 // ── Authenticated routes ───────────────────────────────────────
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/problems/create', CreateProblem::class)->name('problems.create');
-    Route::get('/dashboard', UserDashboard::class)->name('dashboard');
-    Route::get('/settings', UserSettings::class)->name('settings');
+    Route::get('/problems/create', CreateProblem::class)->name('problems.create')->middleware('throttle:20,1');
+    Route::get('/dashboard', UserDashboard::class)->name('dashboard')->middleware('throttle:30,1');
+    Route::get('/settings', UserSettings::class)->name('settings')->middleware('throttle:20,1');
 });
 
 // ── Admin routes ───────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin,moderator'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', ModerationPanel::class)->name('dashboard');
+    Route::get('/', ModerationPanel::class)->name('dashboard')->middleware('throttle:30,1');
 });
 
 // ── Auth routes (Breeze) ──────────────────────────────────────

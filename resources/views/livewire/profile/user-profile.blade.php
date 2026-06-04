@@ -6,12 +6,20 @@
     <div class="flex items-center gap-4 mb-8">
         <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=1e1e2e&color=a78bfa&size=64' }}"
              class="w-16 h-16 rounded-2xl ring-2 ring-zinc-800" alt="{{ $user->name }}">
-        <div>
+        <div class="flex-1">
             <h2 class="text-lg font-bold text-zinc-100">{{ $user->name }}</h2>
             <p class="text-sm text-zinc-500">@{{ $user->username }}</p>
             @if($user->bio)
             <p class="text-xs text-zinc-400 mt-1">{{ $user->bio }}</p>
             @endif
+            <div class="mt-3 flex items-center gap-2">
+                <span class="text-xs text-zinc-500">Badges:</span>
+                @if($user->badges->count() > 0)
+                    <x-badge-list :badges="$user->badges" :limit="5" />
+                @else
+                    <span class="text-xs text-zinc-600 italic">No badges yet</span>
+                @endif
+            </div>
         </div>
     </div>
 

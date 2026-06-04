@@ -9,6 +9,9 @@ import javascript from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
+import { initCodeEditor } from './components/CodeEditor';
+import NotificationManager from './components/NotificationManager';
+import AdvancedSearch from './components/AdvancedSearch';
 
 // Register languages
 hljs.registerLanguage('php',        php);
@@ -28,6 +31,9 @@ window.Alpine = Alpine;
 Alpine.plugin(focus);
 Alpine.start();
 
+// Initialize global components
+window.initCodeEditor = initCodeEditor;
+
 // Highlight all code blocks after Livewire updates
 function highlightCode() {
     document.querySelectorAll('pre code').forEach((block) => {
@@ -39,7 +45,16 @@ function highlightCode() {
 }
 
 // Run on initial load
-document.addEventListener('DOMContentLoaded', highlightCode);
+document.addEventListener('DOMContentLoaded', () => {
+    highlightCode();
+    
+    // Setup real-time notifications for authenticated users
+    const userIdElement = document.querySelector('[data-user-id]');
+    if (userIdElement && window.Echo) {
+        const userId = userIdElement.dataset.userId;
+        window.notificationManager.setupRealTimeNotifications(parseInt(userId));
+    }
+});
 
 // Re-run after Livewire navigations and component updates
 document.addEventListener('livewire:navigated', highlightCode);
@@ -49,6 +64,11 @@ document.addEventListener('livewire:update', () => setTimeout(highlightCode, 100
 document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        document.querySelector('input[placeholder*="Search"]')?.focus();
+        const searchInput = document.querySelector('input[placeholder*="Search"]');
+        if (searchInput) {
+            searchInput.focus();
+        } else {
+            window.advancedSearch?.open();
+        }
     }
 });

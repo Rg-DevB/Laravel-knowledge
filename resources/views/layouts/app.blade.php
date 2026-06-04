@@ -19,6 +19,11 @@
     {{-- Shiki / Prism for syntax highlighting --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=jetbrains-mono:400,700|dm-sans:400,500,600,700" rel="stylesheet" />
+    
+    {{-- User ID for real-time notifications --}}
+    @auth
+    <meta name="user-id" content="{{ auth()->id() }}">
+    @endauth
 </head>
 <body class="bg-[#0a0a0f] text-zinc-100 antialiased font-sans min-h-screen">
 
@@ -110,7 +115,7 @@
         </aside>
 
         {{-- Main content area --}}
-        <div class="flex-1 lg:ml-60 flex flex-col min-h-screen">
+        <div class="flex-1 lg:ml-60 flex flex-col min-h-screen" data-user-id="@auth{{ auth()->id() }}@endauth">
 
             {{-- Top bar --}}
             <header class="sticky top-0 z-20 border-b border-zinc-800/60 bg-[#0a0a0f]/80 backdrop-blur-xl">

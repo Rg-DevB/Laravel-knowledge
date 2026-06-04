@@ -1,23 +1,30 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/vendor
+```
+# Dependencies
+vendor/
+composer.lock
+
+# Build artifacts
+public/hot
+storage/
+bootstrap/cache/
+
+# Environment
 .env
-.env.backup
-.env.production
-.phpactor.json
+.env.local
+.env.*
+
+# Logs
+*.log
+storage/logs/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
 .phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-/auth.json
-/.fleet
-/.idea
-/.nova
-/.vscode
-/.zed
+```

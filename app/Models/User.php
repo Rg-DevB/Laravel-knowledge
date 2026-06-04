@@ -15,12 +15,13 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Model;
 
 
 
 
-#[Fillable(['name', 'email', 'password', 'avatar', 'bio', 'github_url', 'twitter_url', 'website_url', 'reputation', 'role', 'username'])]
+#[Fillable(['name', 'email', 'password', 'avatar', 'bio', 'github_url', 'twitter_url', 'website_url', 'username'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 
 class User extends Authenticatable
@@ -89,18 +90,61 @@ class User extends Authenticatable
     {
         return $this->hasMany(Follow::class);
     }
- 
+
+    public function badges(): BelongsToMany
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges')
+                    ->withPivot('earned_at', 'context')
+                    ->orderBy('pivot_earned_at', 'desc');
+    }
+
     // ── Helpers ────────────────────────────────────────────────
+    
+    public function awardBadge(Badge $badge, string $context = null): bool
+    {
+        if ($this->badges()->where('badge_id', $badge->id)->exists()) {
+            return false;
+        }
+
+        $this->badges()->attach($badge->id, [
+            'earned_at' => now(),
+            'context' => $context,
+        ]);
+
+        return true;
+    }
+
+    public function checkAndAwardBadges(): void
+    {
+        $badges = Badge::active()->get();
+
+        foreach ($badges as $badge) {
+            $shouldAward = match ($badge->slug) {
+                'first-problem' => $this->problems()->count() >= $badge->requirement,
+                'first-solution' => $this->solutions()->count() >= $badge->requirement,
+                'problem-master' => $this->problems()->count() >= $badge->requirement,
+                'solution-expert' => $this->solutions()->count() >= $badge->requirement,
+                'contributor' => $this->reputation >= $badge->requirement,
+                default => false,
+            };
+
+            if ($shouldAward) {
+                $this->awardBadge($badge, "Auto-awarded for reaching {$badge->requirement}");
+            }
+        }
+    }
  
     public function addReputation(int $points, string $reason, Model $reference): void
     {
-        $this->increment('reputation', $points);
-        $this->reputationLogs()->create([
-            'points'            => $points,
-            'reason'            => $reason,
-            'referenceable_id'  => $reference->id,
-            'referenceable_type'=> $reference::class,
-        ]);
+        \DB::transaction(function () use ($points, $reason, $reference) {
+            $this->increment('reputation', $points);
+            $this->reputationLogs()->create([
+                'points'            => $points,
+                'reason'            => $reason,
+                'referenceable_id'  => $reference->id,
+                'referenceable_type'=> $reference::class,
+            ]);
+        });
     }
  
     public function reputationBadge(): string
@@ -124,8 +168,7 @@ class User extends Authenticatable
  
     public function hasFavorited(Model $model): bool
     {
-        return \DB::table('favorites')
-            ->where('user_id', $this->id)
+        return $this->favorites()
             ->where('favoritable_id', $model->id)
             ->where('favoritable_type', $model::class)
             ->exists();
