@@ -8,7 +8,7 @@
 
 <br /><br />
 
-<h1>⌬ LaravelKnow</h1>
+<h1>⌬ Knowravel</h1>
 
 <p><strong>The collaborative knowledge base built exclusively for Laravel developers.</strong><br />
 Document problems, share solutions, learn from the community — all in one dark-mode SaaS platform.</p>
