@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 
 
 
-#[Fillable(['name', 'email', 'password', 'avatar', 'bio', 'github_url', 'twitter_url', 'website_url', 'reputation', 'role', 'username'])]
+#[Fillable(['name', 'email', 'password', 'avatar', 'bio', 'github_url', 'twitter_url', 'website_url', 'username'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 
 class User extends Authenticatable
@@ -94,13 +94,15 @@ class User extends Authenticatable
  
     public function addReputation(int $points, string $reason, Model $reference): void
     {
-        $this->increment('reputation', $points);
-        $this->reputationLogs()->create([
-            'points'            => $points,
-            'reason'            => $reason,
-            'referenceable_id'  => $reference->id,
-            'referenceable_type'=> $reference::class,
-        ]);
+        \DB::transaction(function () use ($points, $reason, $reference) {
+            $this->increment('reputation', $points);
+            $this->reputationLogs()->create([
+                'points'            => $points,
+                'reason'            => $reason,
+                'referenceable_id'  => $reference->id,
+                'referenceable_type'=> $reference::class,
+            ]);
+        });
     }
  
     public function reputationBadge(): string
@@ -124,8 +126,7 @@ class User extends Authenticatable
  
     public function hasFavorited(Model $model): bool
     {
-        return \DB::table('favorites')
-            ->where('user_id', $this->id)
+        return $this->favorites()
             ->where('favoritable_id', $model->id)
             ->where('favoritable_type', $model::class)
             ->exists();

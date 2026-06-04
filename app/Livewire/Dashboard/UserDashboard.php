@@ -4,7 +4,7 @@ namespace App\Livewire\Dashboard;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
-use App\Models\{Problem, Solution, Vote};
+use App\Models\{Problem, Solution};
 
 #[Layout('layouts.app')]
 class UserDashboard extends Component
@@ -19,7 +19,7 @@ class UserDashboard extends Component
             'solutions_posted'  => $user->solutions()->count(),
             'best_solutions'    => $user->solutions()->where('is_best', true)->count(),
             'problems_solved'   => $user->problems()->where('status', 'solved')->count(),
-            'total_upvotes'     => Vote::whereHasMorph('votable', [Solution::class], fn($q) => $q->where('user_id', $user->id))->where('value', 1)->count(),
+            'total_upvotes'     => $user->solutions()->with('votes')->get()->sum(fn($s) => $s->votes()->where('value', 1)->count()),
             'reputation'        => $user->reputation,
             'badge'             => $user->reputationBadge(),
             'next_badge_at'     => $this->nextBadgeThreshold($user->reputation),

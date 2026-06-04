@@ -31,8 +31,7 @@ class ProblemDetails extends Component
 
         if (Auth::check()) {
             $this->isFavorited = Auth::user()->hasFavorited($this->problem);
-            $this->isFollowing  = \DB::table('follows')
-                ->where('user_id', Auth::id())
+            $this->isFollowing  = Auth::user()->follows()
                 ->where('followable_id', $this->problem->id)
                 ->where('followable_type', Problem::class)
                 ->exists();
@@ -81,29 +80,34 @@ class ProblemDetails extends Component
     {
         if (!Auth::check()) { $this->redirectRoute('login'); return; }
 
-        $params = [
-            'followable_id'   => $this->problem->id,
-            'followable_type' => Problem::class,
-        ];
+        $follow = Auth::user()->follows()
+            ->where('followable_id', $this->problem->id)
+            ->where('followable_type', Problem::class)
+            ->first();
 
-        $exists = \DB::table('follows')
-            ->where('user_id', Auth::id())
-            ->where($params)
-            ->exists();
-
-        if ($exists) {
-            \DB::table('follows')->where('user_id', Auth::id())->where($params)->delete();
+        if ($follow) {
+            $follow->delete();
             $this->isFollowing = false;
         } else {
-            \DB::table('follows')->insert([...$params, 'user_id' => Auth::id(), 'created_at' => now(), 'updated_at' => now()]);
+            Auth::user()->follows()->create([
+                'followable_id'   => $this->problem->id,
+                'followable_type' => Problem::class,
+            ]);
             $this->isFollowing = true;
         }
     }
 
     public function markBestSolution(int $solutionId): void
     {
+        $solution = Solution::findOrFail($solutionId);
+        
+        // Verify the solution belongs to this problem
+        if ($solution->problem_id !== $this->problem->id) {
+            abort(403, 'Invalid solution for this problem');
+        }
+        
         $this->authorize('markBestSolution', $this->problem);
-        Solution::findOrFail($solutionId)->markAsBest();
+        $solution->markAsBest();
         $this->problem->refresh();
     }
 

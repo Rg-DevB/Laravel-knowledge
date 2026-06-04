@@ -36,7 +36,7 @@ class ProblemList extends Component
     public function problems(): LengthAwarePaginator
     {
         $query = Problem::query()
-            ->with(['user', 'category', 'tags', 'bestSolution'])
+            ->with(['user', 'category', 'tags', 'bestSolution.user'])
             ->withCount(['solutions', 'comments'])
             ->when($this->search, fn($q) => $q->whereFullText(['title', 'description'], $this->search))
             ->when($this->status, fn($q) => $q->where('status', $this->status))
@@ -46,11 +46,11 @@ class ProblemList extends Component
 
         $query = match ($this->sort) {
             'popular'    => $query->orderByDesc('votes_count')->orderByDesc('views'),
-            'unanswered' => $query->where('status', 'open')->orderByDesc('created_at'),
-            default      => $query->orderByDesc('created_at'),
+            'unanswered' => $query->where('status', 'open')->latest(),
+            default      => $query->latest(),
         };
 
-        return $query->paginate($this->perPage);
+        return $query->paginate($this->perPage)->withQueryString();
     }
 
     #[Computed]
