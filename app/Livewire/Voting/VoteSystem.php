@@ -63,6 +63,10 @@ class VoteSystem extends Component
             }
         }
 
+        if (method_exists($this->model, 'updateVoteCount')) {
+            $this->model->updateVoteCount();
+        }
+
         $this->votesCount = $this->model->fresh()->votes_count ?? 0;
     }
 

@@ -53,26 +53,31 @@ class ProblemDetails extends Component
     #[Computed]
     public function relatedProblems()
     {
-        return Problem::search($this->problem->title)
-            ->where('id', '!=', $this->problem->id)
-            ->take(4)
-            ->get(['id', 'title', 'slug', 'status']);
+        try {
+            return Problem::search($this->problem->title)
+                ->where('id', '!=', $this->problem->id)
+                ->take(4)
+                ->get(['id', 'title', 'slug', 'status']);
+        } catch (\Exception $e) {
+            return collect();
+        }
     }
 
     public function toggleFavorite(): void
     {
-        if (!Auth::check()) { $this->redirectRoute('login'); return; }
+        if (!Auth::check()) { $this->redirectRoute('login', navigate: true); return; }
 
         $params = [
+            'user_id'          => Auth::id(),
             'favoritable_id'   => $this->problem->id,
             'favoritable_type' => Problem::class,
         ];
 
         if ($this->isFavorited) {
-            Auth::user()->favorites()->where($params)->delete();
+            \DB::table('favorites')->where($params)->delete();
             $this->isFavorited = false;
         } else {
-            Auth::user()->favorites()->create([...$params, 'user_id' => Auth::id()]);
+            \DB::table('favorites')->insert([...$params, 'created_at' => now(), 'updated_at' => now()]);
             $this->isFavorited = true;
         }
     }

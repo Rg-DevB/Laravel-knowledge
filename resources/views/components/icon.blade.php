@@ -6,6 +6,7 @@ $icons = [
     'bug' => '<circle cx="8" cy="6" r="2" /><circle cx="16" cy="6" r="2" /><path d="M12 10v4" /><rect x="4" y="12" width="16" height="8" rx="2" /><path d="M7.5 8h8.5" />',
     'plus-circle' => '<circle cx="12" cy="12" r="10" /><path d="M12 8v8" /><path d="M8 12h8" />',
     'chart' => '<path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-3 3" />',
+    'bolt' => '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />',
 ];
 $path = $icons[$name] ?? '';
 @endphp

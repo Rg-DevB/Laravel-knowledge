@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,12 +15,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 
+#[Fillable(['user_id', 'category_id', 'title', 'slug', 'description', 'error_log', 'steps_to_reproduce', 'expected_behavior', 'actual_behavior', 'laravel_version', 'package_versions', 'project_phase', 'status', 'best_solution_id', 'views', 'votes_count'])]
 class Problem extends Model
 {
     //
     use HasFactory, SoftDeletes, Searchable; // Laravel Scout
-
-    #[Fillable(['user_id', 'category_id', 'title', 'slug', 'description', 'error_log', 'steps_to_reproduce', 'expected_behavior', 'actual_behavior', 'laravel_version', 'package_versions', 'project_phase', 'status',])]
 
     protected $casts = [
         'package_versions' => 'array',

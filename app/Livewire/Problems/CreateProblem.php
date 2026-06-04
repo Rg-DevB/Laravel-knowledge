@@ -56,16 +56,21 @@ class CreateProblem extends Component
             return;
         }
 
-        $this->similarIssues = Problem::search($this->title)
-            ->take(3)
-            ->get()
-            ->map(fn($p) => [
-                'id'     => $p->id,
-                'title'  => $p->title,
-                'slug'   => $p->slug,
-                'status' => $p->status,
-            ])
-            ->toArray();
+        try {
+            $this->similarIssues = Problem::search($this->title)
+                ->take(3)
+                ->get()
+                ->map(fn($p) => [
+                    'id'     => $p->id,
+                    'title'  => $p->title,
+                    'slug'   => $p->slug,
+                    'status' => $p->status,
+                ])
+                ->toArray();
+        } catch (\Exception $e) {
+            // Gracefully degrade if search engine (e.g. Meilisearch) is not running
+            $this->similarIssues = [];
+        }
 
         $this->showSimilar = count($this->similarIssues) > 0;
     }

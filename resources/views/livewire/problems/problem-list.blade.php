@@ -1,4 +1,46 @@
-<div class="space-y-2">
+<div>
+    {{-- ── Filter & Search ─────────────────────────────────────────── --}}
+    <div class="space-y-4 mb-8">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div class="relative w-full sm:w-96">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search problems..."
+                       class="w-full pl-9 pr-4 py-2 bg-zinc-900/40 border border-zinc-800/60 rounded-xl text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/20 transition-all">
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <select wire:model.live="category" class="bg-zinc-900/40 border border-zinc-800/60 rounded-xl px-3 py-2 text-xs text-zinc-300 outline-none focus:border-rose-500/50 transition-all">
+                    <option value="">All Categories</option>
+                    @foreach($this->categories as $cat)
+                        <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+
+                <select wire:model.live="status" class="bg-zinc-900/40 border border-zinc-800/60 rounded-xl px-3 py-2 text-xs text-zinc-300 outline-none focus:border-rose-500/50 transition-all">
+                    <option value="">All Status</option>
+                    <option value="open">Open</option>
+                    <option value="solved">Solved</option>
+                    <option value="closed">Closed</option>
+                </select>
+
+                <select wire:model.live="sort" class="bg-zinc-900/40 border border-zinc-800/60 rounded-xl px-3 py-2 text-xs text-zinc-300 outline-none focus:border-rose-500/50 transition-all">
+                    <option value="recent">Most Recent</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="unanswered">Unanswered</option>
+                </select>
+            </div>
+        </div>
+
+        @if($search || $category || $status || count($selectedTags) > 0)
+        <div class="flex justify-center">
+            <button wire:click="clearFilters" class="text-[10px] uppercase tracking-widest font-bold text-rose-500 hover:text-rose-400 transition-colors">
+                Clear all filters
+            </button>
+        </div>
+        @endif
+    </div>
+
+    <div class="space-y-2">
     @forelse($this->problems as $problem)
     <a href="{{ route('problems.show', $problem->slug) }}" wire:navigate
        class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800/60 bg-zinc-900/30 hover:bg-zinc-900/60 hover:border-zinc-700/60 transition-all group">
@@ -36,4 +78,5 @@
         <a href="{{ route('problems.create') }}" wire:navigate class="text-xs text-rose-400 hover:text-rose-300">Post the first one →</a>
     </div>
     @endforelse
+</div>
 </div>

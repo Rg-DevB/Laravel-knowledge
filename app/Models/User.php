@@ -130,4 +130,22 @@ class User extends Authenticatable
             ->where('favoritable_type', $model::class)
             ->exists();
     }
+
+    // ── Boot ──────────────────────────────────────────────────
+ 
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (!$user->username) {
+                $username = \Illuminate\Support\Str::slug($user->name);
+                
+                // Ensure unique username
+                if (static::where('username', $username)->exists()) {
+                    $username .= '-' . \Illuminate\Support\Str::lower(\Illuminate\Support\Str::random(4));
+                }
+                
+                $user->username = $username;
+            }
+        });
+    }
 }

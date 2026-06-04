@@ -26,17 +26,21 @@ class SearchBar extends Component
             return;
         }
 
-        $results = Problem::search($this->query)
-            ->take(6)
-            ->get(['id', 'title', 'slug', 'status', 'votes_count']);
+        try {
+            $results = Problem::search($this->query)
+                ->take(6)
+                ->get(['id', 'title', 'slug', 'status', 'votes_count']);
 
-        $this->suggestions = $results->map(fn($p) => [
-            'id'          => $p->id,
-            'title'       => $p->title,
-            'slug'        => $p->slug,
-            'status'      => $p->status,
-            'votes_count' => $p->votes_count,
-        ])->toArray();
+            $this->suggestions = $results->map(fn($p) => [
+                'id'          => $p->id,
+                'title'       => $p->title,
+                'slug'        => $p->slug,
+                'status'      => $p->status,
+                'votes_count' => $p->votes_count,
+            ])->toArray();
+        } catch (\Exception $e) {
+            $this->suggestions = [];
+        }
 
         $this->showSuggestions = count($this->suggestions) > 0;
     }

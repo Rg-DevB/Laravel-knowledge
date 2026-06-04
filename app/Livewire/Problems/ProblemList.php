@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ProblemList extends Component
 {
-    #[QueryString]
+    #[QueryString(as: 'q')]
     public string  $search        = '';
 
     #[QueryString]
