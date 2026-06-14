@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
  
-            $table->fullText(['content']);
+            // $table->fullText(['content']); // Disabled for SQLite testing
         });
     }
 
