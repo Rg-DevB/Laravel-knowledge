@@ -14,20 +14,22 @@ class UserDashboard extends Component
     public function getStatsProperty(): array
     {
         $user = auth()->user();
+        $reputation = $user->reputation ?? 0;
         return [
             'problems_posted'   => $user->problems()->count(),
             'solutions_posted'  => $user->solutions()->count(),
             'best_solutions'    => $user->solutions()->where('is_best', true)->count(),
             'problems_solved'   => $user->problems()->where('status', 'solved')->count(),
             'total_upvotes'     => Vote::whereHasMorph('votable', [Solution::class], fn($q) => $q->where('user_id', $user->id))->where('value', 1)->count(),
-            'reputation'        => $user->reputation,
+            'reputation'        => $reputation,
             'badge'             => $user->reputationBadge(),
-            'next_badge_at'     => $this->nextBadgeThreshold($user->reputation),
+            'next_badge_at'     => $this->nextBadgeThreshold($reputation),
         ];
     }
 
-    private function nextBadgeThreshold(int $rep): array
+    private function nextBadgeThreshold(?int $rep): array
     {
+        $rep = $rep ?? 0;
         $thresholds = [100 => 'Member', 1000 => 'Contributor', 5000 => 'Expert', 10000 => 'Legend'];
         foreach ($thresholds as $threshold => $badge) {
             if ($rep < $threshold) {

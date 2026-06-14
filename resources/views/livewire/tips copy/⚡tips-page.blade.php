@@ -435,13 +435,13 @@ CODE,
                     'lang'  => 'php',
                     'code'  => <<<'CODE'
 {{-- ✅ Composant Blade --}}
-<x-alert
+<x-tip-alert
     type="success"
     message="Sauvegardé !"
     :icon="true"
 />
 
-{{-- resources/views/components/alert.blade.php --}}
+{{-- resources/views/components/tip-alert.blade.php --}}
 @props(['type', 'message', 'icon' => false])
 <div class="alert alert-{{ $type }}">
     @if($icon) <x-icon /> @endif

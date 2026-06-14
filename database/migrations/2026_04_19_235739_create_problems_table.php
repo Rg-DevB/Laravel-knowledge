@@ -51,7 +51,7 @@ return new class extends Migration
             $table->softDeletes();
  
             // Full-text index for Laravel Scout
-            $table->fullText(['title', 'description', 'error_log']);
+            // $table->fullText(['title', 'description', 'error_log']); // Disabled for SQLite testing
         });
     }
 
